@@ -2,12 +2,13 @@ import EmployeesListItem from "../employees-list-item/employees-list-item";
 
 import './employees-list.css';
 
-const EmployeesList = () => {
+const EmployeesList = ({data,onToggleProp}) => {
     return (
         <ul className="app-list list-group">
-            <EmployeesListItem/>
-            <EmployeesListItem/>
-            <EmployeesListItem/>
+            {data.map(dataEmployees =><EmployeesListItem 
+                                        {...dataEmployees} 
+                                        key={dataEmployees.id}
+                                        onToggleProp={onToggleProp}/>)}
         </ul>
     )
 }
