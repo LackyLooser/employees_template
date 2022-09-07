@@ -13,8 +13,11 @@ class App extends Component{
         {name: 'John C.', salary: 800, increase: false, rise: true, id: 1},
         {name: 'Alex M.', salary: 3000, increase: true, rise: false, id: 2},
         {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: 3}
-    ],
+      ],
+      term: '',
+      filter: 'all'
     }
+    
     newId = 4
     onToggleProp = (id, prop) => {
       this.setState(({data}) =>({
@@ -47,22 +50,48 @@ class App extends Component{
         }
     });
     }
+    onTerm = (search) =>{
+     this.setState({
+      term:search
+     })
+    }
+    onFilterSelector = (filter) =>{
+      this.setState({
+        filter
+      })
+    }
+
+    filterData = (data,filter) =>{
+      switch (filter) {
+        case 'rise':
+          return data.filter(({rise})=> rise)
+
+        case 'salaryMore1000':
+          return data.filter(({salary})=> salary > 1000)
+
+        default: return data
+      }
+    }
+    onSearch = (data,atr)=>{
+      return data.filter(({name})=>name.toLowerCase().includes(atr,0))
+    }
+
     render(){
-    const {data} = this.state
+    const {data,term,filter} = this.state
     const employees = data.length;
     const increase = data.filter(el => el.increase).length
-    console.log(data)
+    const visibleData = this.filterData(this.onSearch(data,term),filter)
     return (
       <div className="app">
           <AppInfo employees={employees} increase={increase}/>
   
           <div className="search-panel">
-              <SearchPanel/>
-              <AppFilter/>
+              <SearchPanel onTerm={this.onTerm}/>
+              <AppFilter filter={filter} onFilterSelector={this.onFilterSelector}/>
           </div>
           
-          <EmployeesList data={data} onToggleProp={this.onToggleProp} deleteItem={this.deleteItem}/>
-          <EmployeesAddForm addItem={this.addItem}/>
+          <EmployeesList data={visibleData} onToggleProp={this.onToggleProp} deleteItem={this.deleteItem}/>
+          <EmployeesAddForm addItem={this.addItem} term={term}/>
       </div>
     );
   }
